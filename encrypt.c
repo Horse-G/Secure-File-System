@@ -25,10 +25,10 @@ int main(int arc, char *argv[])
     fclose(f);
 	
   /* A 256 bit key */
-  unsigned char *key = randval;
+  unsigned char *key = "apassphrase123";
 
   /* A 128 bit IV */
-  unsigned char *iv = "01234567890123456";
+  unsigned char *iv = randval;
 
   /* Message to be encrypted */
   unsigned char *plaintext =
@@ -55,7 +55,7 @@ int main(int arc, char *argv[])
     ciphertext);
 
   /* Do something useful with the ciphertext here */
-  printf("Ciphertext is:\n");
+  printf("Cipher length: %d\nCiphertext is:\n",ciphertext_len);
   BIO_dump_fp(stdout, ciphertext, ciphertext_len);
 
   /* Decrypt the ciphertext */
@@ -159,3 +159,4 @@ int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
 
   return plaintext_len;
 }
+
