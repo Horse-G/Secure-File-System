@@ -2,42 +2,39 @@
 #include <openssl/evp.h>
 #include <openssl/err.h>
 #include <string.h>
-void handleErrors(void);
 
-int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
-  unsigned char *iv, unsigned char *plaintext);
-int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
-    unsigned char *iv, unsigned char *ciphertext);
-	
-	
+
 int main(int arc, char *argv[])
 {
   /* Set up the key and iv. Do I need to say to not hard code these in a
    * real application? :-)
    */
 	
-	//readin 
-	unsigned char randval[32];
     FILE *f;
+	char *passphrase=NULL;
+	passphrase="e10adc3949ba59abbe56e057f20f883e";
 
-    f = fopen("/dev/random", "r");
-    fread(&randval, sizeof(randval), 1, f);
-    fclose(f);
-	
   /* A 256 bit key */
-  unsigned char *key = NULL;
-  memcpy(key,randval,16);
-  
+  unsigned char *key=passphrase;
+  //memcpy(key,randval,16);
 
   /* A 128 bit IV */
-  unsigned char *iv = NULL;
-  memcpy(iv,&randval[15],16);
+  unsigned char iv[128];
+  f = fopen("/dev/random", "r");
+  fread(&iv, sizeof(iv), 1, f);
+  fclose(f);
   
-  printf("key: %s, iv: %s\n",key,iv);
 
-  /* Message to be encrypted */
-  unsigned char *plaintext =
-    "The quick brown fox jumps over the lazy dog";
+  /* Message to be encrypted 
+  unsigned char plaintext[16];
+  f = fopen("/dev/random", "r");
+  fread(&plaintext, sizeof(plaintext), 1, f);
+  fclose(f);
+  */
+  unsigned char *plaintext = "e10adc3949ba59abbe56e057f20f883e";
+  printf("plaintext is: %s\n",plaintext);
+  
+
 
   /* Buffer for ciphertext. Ensure the buffer is long enough for the
    * ciphertext which may be longer than the plaintext, dependant on the
@@ -56,11 +53,11 @@ int main(int arc, char *argv[])
   OPENSSL_config(NULL);
 
   /* Encrypt the plaintext */
-  ciphertext_len = encrypt(plaintext, strlen(plaintext), key, iv,
+  ciphertext_len = encrypt(plaintext, 32, key, iv,
     ciphertext);
 
   /* Do something useful with the ciphertext here */
-  printf("Cipher length: %d\nCiphertext is:\n",ciphertext_len);
+  printf("Ciphertext is:\n");
   BIO_dump_fp(stdout, ciphertext, ciphertext_len);
 
   /* Decrypt the ciphertext */
@@ -104,7 +101,7 @@ int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
    * In this example we are using 256 bit AES (i.e. a 256 bit key). The
    * IV size for *most* modes is the same as the block size. For AES this
    * is 128 bits */
-  if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
+  if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv))
     handleErrors();
 
   /* Provide the message to be encrypted, and obtain the encrypted output.
@@ -143,7 +140,7 @@ int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
    * In this example we are using 256 bit AES (i.e. a 256 bit key). The
    * IV size for *most* modes is the same as the block size. For AES this
    * is 128 bits */
-  if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_256_cbc(), NULL, key, iv))
+  if(1 != EVP_DecryptInit_ex(ctx, EVP_aes_128_cbc(), NULL, key, iv))
     handleErrors();
 
   /* Provide the message to be decrypted, and obtain the plaintext output.
@@ -164,4 +161,3 @@ int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
 
   return plaintext_len;
 }
-

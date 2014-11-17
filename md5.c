@@ -38,7 +38,7 @@ char *str2md5(const char *str, int length) {
 
     int main(int argc, char **argv) {
         char *output = str2md5("The quick brown fox jumps over the lazy dog", strlen("The quick brown fox jumps over the lazy dog"));
-        printf("%s\n", output);
+        printf("%s\nlength: %lu\n", output, strlen("The quick brown fox jumps over the lazy dog"));
         free(output);
         return 0;
     }
