@@ -3,10 +3,12 @@
 #include <openssl/err.h>
 #include <string.h>
 void handleErrors(void);
+void generate_random(int lenth,char *buffer);
 int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
   unsigned char *iv, unsigned char *plaintext);
 int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
     unsigned char *iv, unsigned char *ciphertext);
+	
 	
 int main(int arc, char *argv[])
 {
@@ -33,13 +35,7 @@ int main(int arc, char *argv[])
 	//another readin method
 	int byte_count = 128;
 	char data[128];
-	FILE *fp;
-	fp = fopen("/dev/urandom", "r");
-	if(fp<0){
-		 fprintf(stderr,"error: failed to read random number!");
-	}
-	fread(&data, 1, byte_count, fp);
-	fclose(fp);
+	generate_random(128,*data);
 	//strncat(data,"\0",1);
 	printf("second method: %s\n",data);
   /* A 256 bit key */
@@ -176,4 +172,14 @@ int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
   EVP_CIPHER_CTX_free(ctx);
 
   return plaintext_len;
+}
+
+void generate_random(int lenth,char *buffer){
+	FILE *fp;
+	fp = fopen("/dev/urandom", "r");
+	if(fp<0){
+		 fprintf(stderr,"error: failed to read random number!");
+	}
+	fread(&buffer, 1, lenth, fp);
+	fclose(fp);
 }
