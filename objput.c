@@ -11,10 +11,11 @@ int main (int argc, char *argv[])
 	char *uname=NULL;
 	char *gname=NULL;
 	char fname[30],source_file[30];
+	char *passphrase=NULL;
 	FILE *source, *target;
 	int count,permission;
 	
-	while ((c = getopt (argc, argv,"u:g:")) != -1){
+	while ((c = getopt (argc, argv,"u:g:k:")) != -1){
 		//printf("option:%c\n",c);
 	    switch (c)
 	      {
@@ -24,6 +25,9 @@ int main (int argc, char *argv[])
 	      case 'g':
 	        gname=optarg;
 	        break;
+  	      case 'k':
+  	        passphrase=optarg;
+  	        break;
 	      case '?':
 	        fprintf (stderr,"Unknown option character `\\x%x'.\n", optopt);
 			break;

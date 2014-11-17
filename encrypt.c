@@ -3,7 +3,7 @@
 #include <openssl/err.h>
 #include <string.h>
 void handleErrors(void);
-void generate_random(int lenth,char *buffer);
+
 int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
   unsigned char *iv, unsigned char *plaintext);
 int encrypt(unsigned char *plaintext, int plaintext_len, unsigned char *key,
@@ -16,30 +16,16 @@ int main(int arc, char *argv[])
    * real application? :-)
    */
 	
-	//read in from dev/urandom
-	/*
-	int randomData = open("/dev/random", O_RDONLY);
-	int myRandomInteger;
-	size_t randomDataLen = 0;
-	while (randomDataLen < sizeof myRandomInteger)
-	{
-	    ssize_t result = read(randomData, ((char*)&myRandomInteger) + randomDataLen, (sizeof myRandomInteger) - randomDataLen);
-	    if (result < 0)
-	    {
-	        fprintf(stderr,"error: failed to read random number!");
-	    }
-	    randomDataLen += result;
-	}
-	close(randomData);
-	*/
-	//another readin method
-	int byte_count = 128;
-	char data[128];
-	generate_random(128,*data);
-	//strncat(data,"\0",1);
-	printf("second method: %s\n",data);
+	//readin 
+	unsigned char randval[128];
+    FILE *f;
+
+    f = fopen("/dev/random", "r");
+    fread(&randval, sizeof(randval), 1, f);
+    fclose(f);
+	
   /* A 256 bit key */
-  unsigned char *key = data;
+  unsigned char *key = randval;
 
   /* A 128 bit IV */
   unsigned char *iv = "01234567890123456";
@@ -172,14 +158,4 @@ int decrypt(unsigned char *ciphertext, int ciphertext_len, unsigned char *key,
   EVP_CIPHER_CTX_free(ctx);
 
   return plaintext_len;
-}
-
-void generate_random(int lenth,char *buffer){
-	FILE *fp;
-	fp = fopen("/dev/urandom", "r");
-	if(fp<0){
-		 fprintf(stderr,"error: failed to read random number!");
-	}
-	fread(&buffer, 1, lenth, fp);
-	fclose(fp);
 }

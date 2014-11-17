@@ -9,14 +9,14 @@ int main(int argc, char *argv[]){
 	FILE *fp;
 	char buff[255],cmd[80];
 	char c;
-	char *uname=NULL,*gname=NULL;
+	char *uname=NULL,*gname=NULL,*passphrase=NULL;
 	char target_file[50],fname[30];
 	int permission,bflag;
 	
 	
 	//argument parsing
     opterr = 0;
-    while ((c = getopt (argc, argv, "u:g:")) != -1)
+    while ((c = getopt (argc, argv, "u:g:k:")) != -1)
       switch (c)
         {
         case 'u':
@@ -27,6 +27,8 @@ int main(int argc, char *argv[]){
           gname = optarg;
   		bflag = 1;
           break;
+        case 'k':
+          passphrase = optarg;
         case '?':
           if (optopt == 'u'||optopt == 'g')
             fprintf (stderr, "Option -%c requires an argument.\n", optopt);
