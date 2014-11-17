@@ -13,9 +13,37 @@ int main(int arc, char *argv[])
   /* Set up the key and iv. Do I need to say to not hard code these in a
    * real application? :-)
    */
-
+	
+	//read in from dev/urandom
+	/*
+	int randomData = open("/dev/random", O_RDONLY);
+	int myRandomInteger;
+	size_t randomDataLen = 0;
+	while (randomDataLen < sizeof myRandomInteger)
+	{
+	    ssize_t result = read(randomData, ((char*)&myRandomInteger) + randomDataLen, (sizeof myRandomInteger) - randomDataLen);
+	    if (result < 0)
+	    {
+	        fprintf(stderr,"error: failed to read random number!");
+	    }
+	    randomDataLen += result;
+	}
+	close(randomData);
+	*/
+	//another readin method
+	int byte_count = 128;
+	char data[128];
+	FILE *fp;
+	fp = fopen("/dev/urandom", "r");
+	if(fp<0){
+		 fprintf(stderr,"error: failed to read random number!");
+	}
+	fread(&data, 1, byte_count, fp);
+	fclose(fp);
+	//strncat(data,"\0",1);
+	printf("second method: %s\n",data);
   /* A 256 bit key */
-  unsigned char *key = "01234567890123456789012345678901";
+  unsigned char *key = data;
 
   /* A 128 bit IV */
   unsigned char *iv = "01234567890123456";
